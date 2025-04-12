@@ -1,40 +1,47 @@
-body {
-    /* Set line height to 1.5 times the font size
-         and use the OS’s UI font as the website font
-       */
-    font: 100%/1.5 system-ui;
-  }
+
 
   /* Base styles */
 body {
+  display: block;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  margin: 0;
   padding: 0;
   background-color: #f4f4f4;
   color: #333;
+  max-width: 200ch;
+  justify-content: center; /* horizontal */
+  margin-inline: max(1em, (100% - 100ch) / 2);
+
 }
 
 /* Navigation styling */
 nav {
   background-color: #003366;
-  padding: 1rem;
+  padding: 0.5em;
+  text-decoration: none;
 }
 
 nav ul {
-  list-style: none;
   margin: 0;
   padding: 0;
   display: flex;
-  flex-wrap: wrap;
   justify-content: center;
-  gap: 1rem;
+  text-align: center;
+  color: inherit;
+  gap: max(1em, (100% - 100ch) / 2);
 }
 
+/* links */
 nav a {
   color: #fff;
-  text-decoration: none;
   font-weight: bold;
 }
+
+/* ???
+a {
+  flex:1rem;
+  justify-content: center;
+}
+  */
 
 nav a:hover {
   text-decoration: underline;
@@ -42,9 +49,7 @@ nav a:hover {
 
 /* Main content container */
 main {
-  max-width: 900px;
-  margin: 2rem auto;
-  padding: 1rem;
+  padding: 5%;
   background-color: white;
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
@@ -55,7 +60,12 @@ h1, h2, h3 {
   color: #003366;
 }
 
-/* Image styling */
+.words{
+  margin-left: 2rem;
+}
+
+
+/* image styling */
 img.responsive {
   display: block;
   max-width: 100%;
@@ -65,29 +75,22 @@ img.responsive {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
-/* Make the image smaller but still responsive */
+/* make the image smaller but still responsive */
 img.small-img {
-  max-width: 300px; /* change this number to adjust size */
+  max-width: 300px;
 }
 
-
-/* Section spacing */
-section {
-  margin-bottom: 2rem;
-}
-
-/* Responsive adjustments */
+/* image centering */
 @media (max-width: 600px) {
   nav ul {
     flex-direction: column;
     align-items: center;
   }
-
-  main {
-    padding: 1rem;
-  }
-
-  h1 {
-    font-size: 1.8rem;
-  }
 }
+
+
+/* section spacing */
+section {
+  margin-bottom: 2rem;
+}
+
