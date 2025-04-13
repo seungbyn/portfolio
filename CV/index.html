@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../style.css">
     <meta charset="UTF-8">
     <title>My Resume</title>
 </head>
@@ -13,43 +13,44 @@
         <li><a href="https://seungbyn.github.io/portfolio/index.html">Home</a></li>
         <li><a href="https://seungbyn.github.io/portfolio/projects/index.html">Projects</a></li>
         <li><a href="https://seungbyn.github.io/portfolio/contact/index.html">Contact</a></li>
-        <li><a href="https://seungbyn.github.io/portfolio/CV/index.html">Resume</a></li>
+        <li><a class='current'href="https://seungbyn.github.io/portfolio/CV/index.html">Resume</a></li>
         <li><a href="https://github.com/seungbyn" target="_blank">GitHub</a></li>
     </ul>
   </nav>
 
-  <main>
-    <h1>My Resume</h1>
+  <h1>My Resume</h1>
 
-    <section>
-      <h2>Education</h2>
-      <article>
-        <header>
-          <h3>University of California, San Diego</h3>
-          <p>Bachelor of Science in Data Science & Minor in business – 
-            <time datetime="2025">2025</time></p>
-        </header>
-        <p>Relevant coursework: Enterprise Finance, Principles of
-            Accounting, Product Marketing & Management, Data Structures
-            Rhetoric
+  <section>
+    <h2>Education</h2>
+    <article>
+      <header>
+        <h3>University of California, San Diego</h3>
+        <p>Bachelor of Science in Data Science & Minor in business – 
+          <time datetime="2025">2025</time>
         </p>
-      </article>
-    </section>
+        <p>Relevant coursework: Enterprise Finance, Principles of
+          Accounting, Product Marketing & Management, Data Structures
+          Rhetoric
+        </p>
+      </header>
+      
+    </article>
+  </section>
 
-    <section>
-      <h2>Professional Experience</h2>
-      <article>
-        <header>
-          <h3>Business Analyst Intern – Capital One</h3>
-          <p><time datetime="2025-06">June 2025</time> – <time datetime="2025-08">August 2025</time></p>
-        </header>
-      </article>
+  <section>
+    <h2>Professional Experience</h2>
+    <article>
+      <header>
+        <h3>Business Analyst Intern – Capital One</h3>
+        <p><time datetime="2025-06">June 2025</time> – <time datetime="2025-08">August 2025</time></p>
+      </header>
+    </article>
 
-      <article>
-        <header>
-          <h3>Sales, Marketing, & Consulting Intern – TargetSmart</h3>
-          <p><time datetime="2024-05">May 2024</time> – <time datetime="2025-05">May 2025</time></p>
-        </header>
+    <article>
+      <header>
+        <h3>Sales, Marketing, & Consulting Intern – TargetSmart</h3>
+        <p><time datetime="2024-05">May 2024</time> – <time datetime="2025-05">May 2025</time>
+        </p>
         <ul>
           <li>Leveraged Python script to organize email marketing 
             list with 100,000+ data points to convert into leads</li>
@@ -59,48 +60,54 @@
           <li>Delivered targeted qualitative research and interpretation with 
             data points from 200,000+ voting precincts</li>
         </ul>
-      </article>
-    </section>
+      </header>
+      
+    </article>
+  </section>
 
-    <section>
-      <h2>Leadership Experience</h2>
+  <section>
+    <h2>Leadership Experience</h2>
+    <article>
+      <header>
+        <h3>President – Bells for Other</h3>
+        <p><time datetime="2021-09">September 2021</time> – <time datetime="2023-05">May 2023</time>
+        </p>
+        <p>Coordinated weekly team meetings & volunteer 
+          opportunities/requirements directed to the student body.
+          Recruited volunteers for several major events for 200+ 
+          community service hours recorded. Established social media and on campus presence amassing 1000+ impressions on posts utilizing digital marketing
+          campaigns on Instagram and newsletters
+        </p>
+      </header>
+      
+    </article>
+  </section>
+
+  <section>
+      <h2>Projects</h2>
       <article>
         <header>
-          <h3>President – Bells for Other</h3>
-          <p><time datetime="2021-09">September 2021</time> – <time datetime="2023-05">May 2023</time></p>
+          <h3>Automated Historical Stock Data Modeling</h3>
         </header>
-        <p>Coordinated weekly team meetings & volunteer 
-            opportunities/requirements directed to the student body.
-            Recruited volunteers for several major events for 200+ 
-            community service hours recorded. Established social media and on campus presence amassing 1000+ impressions on posts utilizing digital marketing
-            campaigns on Instagram and newsletters</p>
+        <p>Implemented automated trading tool using Python using libraries 
+          including TA-Lib, Zipline, NumPy, Pandas for data extraction, 
+          data analysis, modeling, and strategy testing. Utilized Quandl 
+          API to retrieve historical data on specified stocks and imported 
+          into Pandas dataframe. Tracked moving averages to 
+          better analyze stock prices over time and create 
+          more representative models.</p>
       </article>
     </section>
 
     <section>
-        <h2>Projects</h2>
-        <article>
-          <header>
-            <h3>Automated Historical Stock Data Modeling</h3>
-          </header>
-          <p>Implemented automated trading tool using Python using libraries 
-            including TA-Lib, Zipline, NumPy, Pandas for data extraction, 
-            data analysis, modeling, and strategy testing. Utilized Quandl 
-            API to retrieve historical data on specified stocks and imported 
-            into Pandas dataframe. Tracked moving averages to 
-            better analyze stock prices over time and create 
-            more representative models.</p>
-        </article>
-      </section>
+      <h2>Skills</h2>
+      <ul>
+        <li>Python, Git, SQL, HTML, CSS, JavaScript</li>
+        <li>Data Preparation, Microsoft Office</li>
+      </ul>
+    </section>
+  </section>
   
-      <section>
-        <h2>Skills</h2>
-        <ul>
-          <li>Python, Git, SQL, HTML, CSS, JavaScript</li>
-          <li>Data Preparation, Microsoft Office</li>
-        </ul>
-      </section>
-    </main>
   
   </body>
   </html
