@@ -87,6 +87,8 @@ if ('colorScheme' in localStorage) {
     document.documentElement.style.setProperty('color-scheme', saved);
     select.value = saved; // update UI to match
 }
+
+console.log('switch')
   
   // 4. Save the user's preference and apply the theme when changed
 select.addEventListener('input', (event) => {
