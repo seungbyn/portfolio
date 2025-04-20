@@ -1,6 +1,7 @@
 html {
   --color-accent: #003366;
   accent-color: var(--color-accent);
+  color-scheme: dark;
 }
 
 /* Headings */
@@ -24,8 +25,8 @@ h1{
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   padding: 0;
-  background-color: #f4f4f4;
-  color: #333;
+  /*background-color: #f4f4f4;
+  color: #333; */
   max-width: 200ch;
   justify-content: center; /* horizontal */
   margin-inline: max(1em, (100% - 100ch) / 2);
@@ -84,7 +85,7 @@ nav a:hover {
 /* Main content container */
 main {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: white;
+  /*background-color: white;*/
 }
 
 /* on home page */

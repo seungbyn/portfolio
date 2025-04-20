@@ -57,6 +57,10 @@ for (let p of pages) {
         a.classList.add('current');
     }
 
+    if (a.host !== location.host) {
+        a.target = "_blank";
+    }
+
 }
 
 
