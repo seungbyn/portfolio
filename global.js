@@ -63,6 +63,41 @@ for (let p of pages) {
 
 }
 
+// 1. Insert the theme switcher UI
+document.body.insertAdjacentHTML(
+    'afterbegin',
+    `
+    <label class="color-scheme">
+      Theme:
+      <select id="theme-select">
+        <option value="light dark">Auto</option>
+        <option value="light">Light</option>
+        <option value="dark">Dark</option>
+      </select>
+    </label>
+    `
+  );
+  
+  // 2. Reference the <select> element
+const select = document.querySelector('#theme-select');
+  
+  // 3. If there's a saved preference, apply it
+if ('colorScheme' in localStorage) {
+    const saved = localStorage.colorScheme;
+    document.documentElement.style.setProperty('color-scheme', saved);
+    select.value = saved; // update UI to match
+}
+  
+  // 4. Save the user's preference and apply the theme when changed
+select.addEventListener('input', (event) => {
+    const value = event.target.value;
+    localStorage.colorScheme = value;
+    document.documentElement.style.setProperty('color-scheme', value);
+});
+  
+  
+  
+
 
 
 {/* <li><a href="https://seungbyn.github.io/portfolio/index.html">Home</a></li>

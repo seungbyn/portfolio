@@ -1,7 +1,7 @@
 html {
   --color-accent: #003366;
   accent-color: var(--color-accent);
-  color-scheme: dark;
+  color-scheme: light dark;
 }
 
 /* Headings */
@@ -36,13 +36,16 @@ body {
 
 
 
+
+
 /* NAVIGATION */
 nav {
   /*background-color: #003366;*/
   display: flex;
   border-bottom-width: 1px;
   border-bottom-style: solid;
-  border-bottom-color: oklch(80% 3% 200);
+  --border-color: oklch(50% 10% 200 / 40%);
+  border-bottom-color: var(--border-color);
 }
 
 /* links */
@@ -154,4 +157,27 @@ article {
   grid-row: span 3;
   gap: 1em;
 }
+
+
+.color-scheme {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  font-size: 80%;
+  font-family: inherit;
+  background: rgba(255, 255, 255, 0.8); /* optional: makes it more readable on dark bg */
+  padding: 0.3rem 0.5rem;
+  border-radius: 0.5rem;
+  z-index: 1000;
+}
+
+/* Inherit font for select, input, textarea, button */
+input,
+textarea,
+button,
+select {
+  font-family: inherit;
+  font-size: inherit;
+}
+
 
