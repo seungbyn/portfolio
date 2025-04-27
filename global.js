@@ -91,9 +91,41 @@ export async function fetchJSON(url) {
         if (!response.ok) {
             throw new Error(`Failed to fetch projects: ${response.statusText}`);
         }
-        const json = await response.json();   // parse response into JSON
-        return json;                           // RETURN it!!
+        const data = await response.json();
+        return data;                     
     } catch (error) {
         console.error('Error fetching or parsing JSON data:', error);
     }
+}
+
+
+export function renderProjects(project, containerElement, headingLevel = 'h2') {
+    // Validate containerElement
+    if (!(containerElement instanceof HTMLElement)) {
+        console.error('renderProjects error: containerElement is not a valid DOM element.');
+        return;
+    }
+
+    // Validate headingLevel
+    const allowedHeadings = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'];
+    if (!allowedHeadings.includes(headingLevel)) {
+        console.warn(`Invalid headingLevel "${headingLevel}". Defaulting to "h2".`);
+        headingLevel = 'h2';
+    }
+
+    // Clear the container
+    containerElement.innerHTML = '';
+
+    // Create article
+    const article = document.createElement('article');
+
+    // Fill article content dynamically
+    article.innerHTML = `
+        <${headingLevel}>${project.title || 'Untitled Project'}</${headingLevel}>
+        ${project.image ? `<img src="${project.image}" alt="${project.title || 'Project Image'}">` : ''}
+        <p>${project.description || 'No description available.'}</p>
+    `;
+
+    // Append to container
+    containerElement.appendChild(article);
 }
