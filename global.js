@@ -87,10 +87,13 @@ select.addEventListener('input', (event) => {
 /*Importing project data into projects page */
 export async function fetchJSON(url) {
     try {
-      // Fetch the JSON file from the given URL
-      const response = await fetch(url);
-      console.log('check')
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`Failed to fetch projects: ${response.statusText}`);
+        }
+        const json = await response.json();   // parse response into JSON
+        return json;                           // RETURN it!!
     } catch (error) {
-      console.error('Error fetching or parsing JSON data:', error);
+        console.error('Error fetching or parsing JSON data:', error);
     }
 }
