@@ -99,33 +99,34 @@ export async function fetchJSON(url) {
 }
 
 
-export function renderProjects(project, containerElement, headingLevel = 'h2') {
+export function renderProjects(projects, containerElement, headingLevel = 'h2') {
     // Validate containerElement
     if (!(containerElement instanceof HTMLElement)) {
-        console.error('renderProjects error: containerElement is not a valid DOM element.');
-        return;
+      console.error('renderProjects error: containerElement is not a valid DOM element.');
+      return;
     }
-
+  
     // Validate headingLevel
     const allowedHeadings = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'];
     if (!allowedHeadings.includes(headingLevel)) {
-        console.warn(`Invalid headingLevel "${headingLevel}". Defaulting to "h2".`);
-        headingLevel = 'h2';
+      console.warn(`Invalid headingLevel "${headingLevel}". Defaulting to "h2".`);
+      headingLevel = 'h2';
     }
-
-    // Clear the container
+  
+    // Clear container first
     containerElement.innerHTML = '';
-
-    // Create article
-    const article = document.createElement('article');
-
-    // Fill article content dynamically
-    article.innerHTML = `
+  
+    // Loop over the list of projects
+    for (const project of projects) {
+      const article = document.createElement('article');
+  
+      article.innerHTML = `
         <${headingLevel}>${project.title || 'Untitled Project'}</${headingLevel}>
         ${project.image ? `<img src="${project.image}" alt="${project.title || 'Project Image'}">` : ''}
         <p>${project.description || 'No description available.'}</p>
-    `;
-
-    // Append to container
-    containerElement.appendChild(article);
-}
+      `;
+  
+      containerElement.appendChild(article);
+    }
+  }
+  
