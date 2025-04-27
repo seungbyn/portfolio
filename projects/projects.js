@@ -1,25 +1,24 @@
 import { fetchJSON, renderProjects } from '../global.js';
-
-async function loadProjects() {
-  const projects = await fetchJSON('../lib/projects.json');
-  const projectsContainer = document.querySelector('.projects');
+  
+const projects = await fetchJSON('../lib/projects.json');
+  
+const projectsContainer = document.querySelector('.projects');
 
   // Clear existing content
-  projectsContainer.innerHTML = '';
+  
+projectsContainer.innerHTML = '';
 
   // Render EACH project individually
-  for (const project of projects) {
+for (const project of projects) {
     renderProjects(project, projectsContainer, 'h2');
-  }
-
-  // Count number of projects and update the projects-title (NEW requirement)
-  const projectTitle = document.querySelector('.projects-title');
-  if (projectTitle) {
-    projectTitle.textContent = `Projects (${projects.length})`;
-  }
 }
 
-loadProjects();
+  // Count number of projects and update the projects-title (NEW requirement)
+const projectTitle = document.querySelector('.projects-title');
+if (projectTitle) {
+    projectTitle.textContent = `Projects (${projects.length})`;
+}
+
 /*<article>
             <h2>Lorem ipsum dolor sit.</h2>
             <img src="https://vis-society.github.io/labs/2/images/empty.svg" alt="">
