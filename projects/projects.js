@@ -4,10 +4,6 @@ const projects = await fetchJSON('../lib/projects.json');
   
 const projectsContainer = document.querySelector('.projects');
 
-  // Clear existing content
-  
-projectsContainer.innerHTML = '';
-
   // Render EACH project individually
 for (const project of projects) {
     renderProjects(project, projectsContainer, 'h2');
