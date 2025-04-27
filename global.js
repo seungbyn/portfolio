@@ -99,11 +99,12 @@ select.addEventListener('input', (event) => {
   
   
   
-
-
-
-{/* <li><a href="https://seungbyn.github.io/portfolio/index.html">Home</a></li>
-            <li><a href="https://seungbyn.github.io/portfolio/projects/index.html">Projects</a></li>
-            <li><a href="https://seungbyn.github.io/portfolio/contact/index.html">Contact</a></li>
-            <li><a href="https://seungbyn.github.io/portfolio/CV/index.html">Resume</a></li>
-            <li><a href="https://github.com/seungbyn" target="_blank">GitHub</a></li> */}
+/*Importing project data into projects page */
+export async function fetchJSON(url) {
+    try {
+      // Fetch the JSON file from the given URL
+      const response = await fetch(url);
+    } catch (error) {
+      console.error('Error fetching or parsing JSON data:', error);
+    }
+}
