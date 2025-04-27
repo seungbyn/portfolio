@@ -5,21 +5,6 @@ function $$(selector, context = document) {
 }
 
 
-
-// navLinks = $$("nav a");
-
-// console.log(navLinks);
-
-// let currentLink = navLinks.find(
-//     (a) => a.host === location.host && a.pathname === location.pathname,
-// );
-
-// console.log(location.host);
-// console.log(location.pathname);
-
-// currentLink?.classList.add('current');
-
-
 //Navigation Control
 const BASE_PATH = (location.hostname === "localhost" || location.hostname === "127.0.0.1")
   ? "/"                  // Local server
@@ -104,6 +89,7 @@ export async function fetchJSON(url) {
     try {
       // Fetch the JSON file from the given URL
       const response = await fetch(url);
+      console.log('check')
     } catch (error) {
       console.error('Error fetching or parsing JSON data:', error);
     }
