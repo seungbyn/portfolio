@@ -113,10 +113,10 @@ export function renderProjects(projects, containerElement, headingLevel = 'h2') 
       headingLevel = 'h2';
     }
   
-    // Clear container first
+    // 🟡 Clear the container ONCE
     containerElement.innerHTML = '';
   
-    // Loop over the list of projects
+    // 🟡 Loop through all the projects
     for (const project of projects) {
       const article = document.createElement('article');
   
@@ -126,7 +126,9 @@ export function renderProjects(projects, containerElement, headingLevel = 'h2') 
         <p>${project.description || 'No description available.'}</p>
       `;
   
+      // 🟡 Only appending, not clearing again
       containerElement.appendChild(article);
     }
   }
+  
   
