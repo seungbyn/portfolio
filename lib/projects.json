@@ -1,61 +1,73 @@
 [
     {
-        "title": "Lorem ipsum dolor sit.",
+        "title": "Automated Historical Stock Data Modeling",
+        "year": "2024",
         "image": "https://vis-society.github.io/labs/2/images/empty.svg",
-        "description": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi, nihil commodi veritatis quibusdam minus laudantium aspernatur libero voluptatum sit nobis aperiam nulla. Adipisci at delectus ipsam deleniti quis, modi et."
+        "description": "Implemented automated trading tool using Python using libraries including TA-Lib, Zipline, NumPy, Pandas for data."
     },
     {
-        "title": "Labore sequi deserunt veniam.",
+        "title": "JIRA Data Scraper",
+        "year": "2023",
         "image": "https://vis-society.github.io/labs/2/images/empty.svg",
-        "description": "Ad nemo quo explicabo commodi, minima nesciunt repudiandae dolor voluptates dolorum autem minus, perspiciatis magnam recusandae quaerat? Sed, rerum veritatis eaque laudantium in accusantium, quam nam non id, officia perspiciatis."
+        "description": "Developed Python based script enabling user to easily extract and display large quantities of data from JIRA."
     },
     {
-        "title": "Eum cupiditate sed quis.",
+        "title": "Personal Portfolio Website",
+        "year": "2025",
         "image": "https://vis-society.github.io/labs/2/images/empty.svg",
-        "description": "Perferendis, in sint. Dicta quisquam assumenda nihil tempora eaque ad ratione earum enim voluptatibus quo dolorem deserunt totam quis, ullam reprehenderit provident. Dolorum excepturi voluptatum ad, reiciendis qui ab temporibus?"
+        "description": "Designed and deployed a fully personalized website using HTML, CSS, and JavaScript to showcase projects and skills."
     },
     {
-        "title": "Voluptatibus eos quas aut.",
+        "title": "Power Outage Analysis",
+        "year": "2024",
         "image": "https://vis-society.github.io/labs/2/images/empty.svg",
-        "description": "Voluptates placeat, aspernatur similique odit vitae aliquam quidem pariatur sit earum beatae soluta ad cupiditate excepturi id numquam perferendis! Officiis dolorem maxime alias facilis velit tenetur dicta suscipit nulla quae."
+        "description": "Analyzed historical power outage data to pinpoint patterns, outage causes, and response times with visulizations."
     },
     {
-        "title": "Animi accusamus architecto veritatis?",
+        "title": "Food Price vs. Processing Levels",
+        "year": "2025",
         "image": "https://vis-society.github.io/labs/2/images/empty.svg",
-        "description": "Possimus quas facilis amet nihil, ut eveniet iste et! Dolor, iure facere eaque esse odio vero tempora fugit dolorem qui sequi! Nisi aspernatur tempore veritatis nihil quibusdam, beatae eum reiciendis."
+        "description": "Cleaned & analyzed data on grocery store food products and created visualization on relationship between price and processing levels. "
     },
     {
-        "title": "Nihil ex ipsum culpa.",
+        "title": "Airbnb Price Prediction Model",
+        "year": "2025",
         "image": "https://vis-society.github.io/labs/2/images/empty.svg",
-        "description": "Ipsa veniam voluptatum laboriosam eos quo maxime. Quidem sunt id asperiores doloremque iste excepturi enim illo aperiam aut omnis, exercitationem unde, itaque laboriosam impedit, accusantium maiores voluptatibus nobis explicabo nam!"
+        "description": "Developed prediction model to predict Airbnb prices based on location, amentities, features, and property owners."
     },
     {
-        "title": "Commodi, vero quo? Dolore.",
+        "title": "Building Prediction Model Algorithms from Scratch",
+        "year": "2025",
         "image": "https://vis-society.github.io/labs/2/images/empty.svg",
-        "description": "Dolore tenetur repellendus amet quo velit ducimus molestias officia nobis iure pariatur ratione dolorem dolor odit quaerat cum maxime temporibus voluptate ipsa voluptatem, expedita eos. Rem sed perspiciatis cumque labore?"
+        "description": "Developed basic prediction model algorithms from raw code."
     },
     {
-        "title": "Adipisci rerum corrupti numquam!",
+        "title": "LinkedIn Profile Scraper",
+        "year": "2024",
         "image": "https://vis-society.github.io/labs/2/images/empty.svg",
-        "description": "Eos reiciendis voluptas assumenda doloribus voluptate perspiciatis asperiores cupiditate facere, tenetur nobis, praesentium deleniti perferendis, obcaecati dignissimos dolores accusamus maiores nisi necessitatibus? Asperiores optio, distinctio eius labore quo voluptas enim."
+        "description": "Created scraper that extracts information on companiesm job listings, and skills required for applications."
     },
     {
-        "title": "Tempore dignissimos hic consequuntur?",
+        "title": "Investment Portfolio Simulator",
+        "year": "2023",
         "image": "https://vis-society.github.io/labs/2/images/empty.svg",
-        "description": "Voluptate, saepe. Fuga minima tenetur rem quis repellendus ex deleniti reprehenderit eaque fugit? Ipsum soluta libero aliquam sapiente provident harum nam exercitationem architecto? Ut repudiandae ipsam perspiciatis, iste non cumque."
+        "description": "Simulates customized portfolio performance over a period of time."
     },
     {
-        "title": "Inventore rem eius mollitia.",
+        "title": "Budgeting Application",
+        "year": "2024",
         "image": "https://vis-society.github.io/labs/2/images/empty.svg",
-        "description": "Maxime impedit sequi repellat aut ea rerum mollitia alias aspernatur, eius culpa consectetur quas totam sapiente accusantium tempora, sint eveniet ipsum cumque repellendus labore quaerat tempore autem temporibus officia. Officiis."
+        "description": "Allows user to track income, expenses, and different financial goals"
     },
     {
-        "title": "Quis molestias quaerat quos.",
+        "title": "Placeholder #1",
+        "year": "2025",
         "image": "https://vis-society.github.io/labs/2/images/empty.svg",
         "description": "Totam amet nesciunt quaerat nam perferendis, molestiae ipsa autem eaque quidem temporibus possimus! Aliquam assumenda quos officiis culpa aspernatur, praesentium labore expedita molestias asperiores, pariatur sapiente, maiores quas! Possimus, est?"
     },
     {
-        "title": "Laborum tenetur explicabo quis.",
+        "title": "Placeholder #2",
+        "year": "2025",
         "image": "https://vis-society.github.io/labs/2/images/empty.svg",
         "description": "A velit perspiciatis sed modi blanditiis laborum maxime iusto quasi ipsum? Impedit dolor blanditiis eum alias cumque recusandae, odio amet harum hic atque excepturi eos quisquam fugit! Eveniet, doloremque accusamus?"
     }
