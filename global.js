@@ -123,8 +123,12 @@ export function renderProjects(projects, containerElement, headingLevel = 'h2') 
       article.innerHTML = `
         <${headingLevel}>${project.title || 'Untitled Project'}</${headingLevel}>
         ${project.image ? `<img src="${project.image}" alt="${project.title || 'Project Image'}">` : ''}
-        <p>${project.description || 'No description available.'}</p>
-      `;
+        <div>
+            <p>${project.description || 'No description available.'}</p>
+            ${project.year ? `<p class="project-year">${project.year}</p>` : ''}
+        </div>
+        `;
+
   
       // 🟡 Only appending, not clearing again
       containerElement.appendChild(article);
