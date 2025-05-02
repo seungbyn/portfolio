@@ -3,8 +3,6 @@ import * as d3 from 'https://cdn.jsdelivr.net/npm/d3@7.9.0/+esm';
 
 async function loadProjects() {
   const projects = await fetchJSON('../lib/projects.json');
-  console.log('Loaded projects:', projects);
-
   const projectsContainer = document.querySelector('.projects');
   const searchInput = document.querySelector('.searchBar');
   const svg = d3.select('#projects-pie-plot');
@@ -12,7 +10,7 @@ async function loadProjects() {
 
   // State
   let query = '';
-  let selectedIndex = -1;
+  let selectedYears = new Set(); // ⬅ allows multiple selection
   let currentPieData = [];
 
   // Initial render
@@ -21,13 +19,12 @@ async function loadProjects() {
   // Search interactivity
   searchInput.addEventListener('input', (event) => {
     query = event.target.value;
-    const filtered = filterProjects(projects, query, selectedIndex);
+    const filtered = filterProjects(projects, query, selectedYears);
     renderProjects(filtered, projectsContainer, 'h2');
     renderPieChart(filtered);
   });
 
-  // Filter function (handles both query and selected wedge)
-  function filterProjects(data, query, selectedIndex) {
+  function filterProjects(data, query, selectedYearsSet) {
     return data.filter((project) => {
       const matchesQuery = Object.values(project)
         .join('\n')
@@ -35,21 +32,19 @@ async function loadProjects() {
         .includes(query.toLowerCase());
 
       const matchesYear =
-        selectedIndex === -1 ||
-        project.year === currentPieData[selectedIndex]?.label;
+        selectedYearsSet.size === 0 || selectedYearsSet.has(project.year);
 
       return matchesQuery && matchesYear;
     });
   }
 
-  // Render everything together
-  function renderAll(projectsList) {
-    renderProjects(projectsList, projectsContainer, 'h2');
-    renderPieChart(projectsList);
+  function renderAll(projectList) {
+    renderProjects(projectList, projectsContainer, 'h2');
+    renderPieChart(projectList);
   }
 
   function renderPieChart(projectsGiven) {
-    // Group and count projects by year
+    // Group by year
     const rolled = d3.rollups(
       projectsGiven,
       (v) => v.length,
@@ -61,50 +56,66 @@ async function loadProjects() {
       value: count,
     }));
 
-    currentPieData = data; // save for filtering context
+    currentPieData = data;
 
     const arcGenerator = d3.arc().innerRadius(0).outerRadius(50);
     const sliceGenerator = d3.pie().value((d) => d.value);
     const arcData = sliceGenerator(data);
     const colors = d3.scaleOrdinal(d3.schemeTableau10);
 
-    // Clear SVG and legend
+    // Clear old content
     svg.selectAll('path').remove();
     legend.selectAll('li').remove();
 
-    // Draw pie wedges
-    arcData.forEach((d, idx) => {
-      svg
-        .append('path')
-        .attr('d', arcGenerator(d))
-        .attr('fill', colors(idx))
-        .attr('class', idx === selectedIndex ? 'selected' : '')
-        .on('click', () => {
-          selectedIndex = selectedIndex === idx ? -1 : idx;
-          const filtered = filterProjects(projects, query, selectedIndex);
-          renderProjects(filtered, projectsContainer, 'h2');
-          renderPieChart(filtered);
-        });
-    });
+    // Draw wedges
+    svg
+      .selectAll('path')
+      .data(arcData)
+      .enter()
+      .append('path')
+      .attr('d', arcGenerator)
+      .attr('fill', (_, idx) => colors(idx))
+      .attr('data-year', (_, idx) => data[idx].label)
+      .classed('selected', (_, idx) => selectedYears.has(data[idx].label))
+      .on('click', function (_, idx) {
+        const year = data[idx].label;
+        // Toggle year in Set
+        if (selectedYears.has(year)) {
+          selectedYears.delete(year);
+        } else {
+          selectedYears.add(year);
+        }
+        const filtered = filterProjects(projects, query, selectedYears);
+        renderProjects(filtered, projectsContainer, 'h2');
+        renderPieChart(filtered);
+      });
 
-    // Draw legend items
-    data.forEach((d, idx) => {
-      legend
-        .append('li')
-        .attr('style', `--color:${colors(idx)}`)
-        .attr('class', idx === selectedIndex ? 'selected' : '')
-        .html(`<span class="swatch"></span> ${d.label} <em>(${d.value})</em>`)
-        .on('click', () => {
-          selectedIndex = selectedIndex === idx ? -1 : idx;
-          const filtered = filterProjects(projects, query, selectedIndex);
-          renderProjects(filtered, projectsContainer, 'h2');
-          renderPieChart(filtered);
-        });
-    });
+    // Draw legend
+    legend
+      .selectAll('li')
+      .data(data)
+      .enter()
+      .append('li')
+      .attr('style', (_, idx) => `--color:${colors(idx)}`)
+      .attr('data-year', (d) => d.label)
+      .classed('selected', (d) => selectedYears.has(d.label))
+      .html((d, idx) => `<span class="swatch"></span> ${d.label} <em>(${d.value})</em>`)
+      .on('click', function (_, idx) {
+        const year = data[idx].label;
+        if (selectedYears.has(year)) {
+          selectedYears.delete(year);
+        } else {
+          selectedYears.add(year);
+        }
+        const filtered = filterProjects(projects, query, selectedYears);
+        renderProjects(filtered, projectsContainer, 'h2');
+        renderPieChart(filtered);
+      });
   }
 }
 
 loadProjects();
+
 
 /*import { fetchJSON, renderProjects } from '../global.js';
 import * as d3 from 'https://cdn.jsdelivr.net/npm/d3@7.9.0/+esm';

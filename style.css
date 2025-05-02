@@ -200,19 +200,29 @@ select {
   align-items: center;
 }
 
-.legend {
-  flex: 1;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(9em, 1fr));
-  gap: 1em;
-  padding: 1em;
-  border: 1px solid gray;
+/* hovering over pie */
+.selected {
+  --color: oklch(60% 45% 0) !important;
 }
 
-.legend li {
-  display: flex;
-  align-items: center;
-  gap: 0.5em;
+
+path {
+  cursor: pointer;
+  transition: 300ms;
+}
+
+svg:has(path:hover) path:not(:hover) {
+  opacity: 0.5;
+}
+
+path.selected {
+  stroke: white;
+  stroke-width: 2px;
+  opacity: 1;
+}
+
+.legend li.selected {
+  --color: oklch(60% 45% 0) !important;
 }
 
 .swatch {
@@ -223,20 +233,22 @@ select {
   border-radius: 50%;
 }
 
-/* hovering over pie */
-.selected {
-  --color: oklch(60% 45% 0) !important;
+.legend {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(9em, 1fr));
+  gap: 1em;
+  padding: 1em;
+  border: 1px solid gray;
+  flex: 1;
 }
-path.selected {
-  fill: var(--color);
-}
-path {
+
+.legend li {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
   cursor: pointer;
-  transition: 300ms;
 }
-svg:has(path:hover) path:not(:hover) {
-  opacity: 0.5;
-}
+
 
 
 
