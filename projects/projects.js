@@ -17,21 +17,18 @@ async function loadProjects() {
 
 loadProjects();
 
-let data = [1, 2];
-let total = data.reduce((a, b) => a + b, 0);
-let angle = 0;
-let arcData = [];
+//Pie Chart
 
-for (let d of data) {
-  let endAngle = angle + (d / total) * 2 * Math.PI;
-  arcData.push({ startAngle: angle, endAngle });
-  angle = endAngle;
-}
-
+let data = [1, 2, 3, 4, 5, 5];
 let arcGenerator = d3.arc().innerRadius(0).outerRadius(50);
-let arcs = arcData.map((d) => arcGenerator(d));
-let colors = ['gold', 'purple'];
 
-arcs.forEach((arc, idx) => {
-  d3.select('svg').append('path').attr('d', arc).attr('fill', colors[idx]);
-});
+// Create the pie slice angle generator
+let sliceGenerator = d3.pie(); 
+let arcData = sliceGenerator(data); // [{startAngle, endAngle, value}, ...]
+let arcs = arcData.map((d) => arcGenerator(d));
+
+let colors = d3.scaleOrdinal(d3.schemeTableau10);
+
+// Append each arc to the SVG
+let svg = d3.select('#projects-pie-plot'); 
+arcs.forEach((arc, idx) => {svg.append('path').attr('d', arc).attr('fill', colors(idx));});
