@@ -1,6 +1,114 @@
 import { fetchJSON, renderProjects } from '../global.js';
 import * as d3 from 'https://cdn.jsdelivr.net/npm/d3@7.9.0/+esm';
 
+async function loadProjects() {
+  const projects = await fetchJSON('../lib/projects.json');
+  console.log('Loaded projects:', projects);
+
+  const projectsContainer = document.querySelector('.projects');
+  const searchInput = document.querySelector('.searchBar');
+  const svg = d3.select('#projects-pie-plot');
+  const legend = d3.select('.legend');
+
+  // State
+  let query = '';
+  let selectedIndex = -1;
+  let currentPieData = [];
+
+  // Initial render
+  renderAll(projects);
+
+  // Search interactivity
+  searchInput.addEventListener('input', (event) => {
+    query = event.target.value;
+    const filtered = filterProjects(projects, query, selectedIndex);
+    renderProjects(filtered, projectsContainer, 'h2');
+    renderPieChart(filtered);
+  });
+
+  // Filter function (handles both query and selected wedge)
+  function filterProjects(data, query, selectedIndex) {
+    return data.filter((project) => {
+      const matchesQuery = Object.values(project)
+        .join('\n')
+        .toLowerCase()
+        .includes(query.toLowerCase());
+
+      const matchesYear =
+        selectedIndex === -1 ||
+        project.year === currentPieData[selectedIndex]?.label;
+
+      return matchesQuery && matchesYear;
+    });
+  }
+
+  // Render everything together
+  function renderAll(projectsList) {
+    renderProjects(projectsList, projectsContainer, 'h2');
+    renderPieChart(projectsList);
+  }
+
+  function renderPieChart(projectsGiven) {
+    // Group and count projects by year
+    const rolled = d3.rollups(
+      projectsGiven,
+      (v) => v.length,
+      (d) => d.year
+    );
+
+    const data = rolled.map(([year, count]) => ({
+      label: year,
+      value: count,
+    }));
+
+    currentPieData = data; // save for filtering context
+
+    const arcGenerator = d3.arc().innerRadius(0).outerRadius(50);
+    const sliceGenerator = d3.pie().value((d) => d.value);
+    const arcData = sliceGenerator(data);
+    const colors = d3.scaleOrdinal(d3.schemeTableau10);
+
+    // Clear SVG and legend
+    svg.selectAll('path').remove();
+    legend.selectAll('li').remove();
+
+    // Draw pie wedges
+    arcData.forEach((d, idx) => {
+      svg
+        .append('path')
+        .attr('d', arcGenerator(d))
+        .attr('fill', colors(idx))
+        .attr('class', idx === selectedIndex ? 'selected' : '')
+        .on('click', () => {
+          selectedIndex = selectedIndex === idx ? -1 : idx;
+          const filtered = filterProjects(projects, query, selectedIndex);
+          renderProjects(filtered, projectsContainer, 'h2');
+          renderPieChart(filtered);
+        });
+    });
+
+    // Draw legend items
+    data.forEach((d, idx) => {
+      legend
+        .append('li')
+        .attr('style', `--color:${colors(idx)}`)
+        .attr('class', idx === selectedIndex ? 'selected' : '')
+        .html(`<span class="swatch"></span> ${d.label} <em>(${d.value})</em>`)
+        .on('click', () => {
+          selectedIndex = selectedIndex === idx ? -1 : idx;
+          const filtered = filterProjects(projects, query, selectedIndex);
+          renderProjects(filtered, projectsContainer, 'h2');
+          renderPieChart(filtered);
+        });
+    });
+  }
+}
+
+loadProjects();
+
+/*import { fetchJSON, renderProjects } from '../global.js';
+import * as d3 from 'https://cdn.jsdelivr.net/npm/d3@7.9.0/+esm';
+
 
 async function loadProjects() {
   const projects = await fetchJSON('../lib/projects.json');
@@ -75,7 +183,7 @@ async function loadProjects() {
 }
 
 loadProjects();
-
+*/
 
 //Pie Chart
 const projects = await fetchJSON('../lib/projects.json');
