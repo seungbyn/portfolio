@@ -194,6 +194,12 @@ select {
 }
 
 /* legend styling */
+.container {
+  display: flex;
+  gap: 2em;
+  align-items: center;
+}
+
 .legend {
   flex: 1;
   display: grid;
@@ -217,10 +223,5 @@ select {
   border-radius: 50%;
 }
 
-.container {
-  display: flex;
-  gap: 2em;
-  align-items: center;
-}
 
 
