@@ -17,11 +17,9 @@ async function loadProjects() {
 
 loadProjects();
 
-let arcGenerator = d3.arc().innerRadius(0).outerRadius(50);
-let arc = arcGenerator({
+let arc = d3.arc().innerRadius(0).outerRadius(50)({
     startAngle: 0,
     endAngle: 2 * Math.PI,
-});
+  });
 d3.select('svg').append('path').attr('d', arc).attr('fill', 'red');
-
 
