@@ -193,45 +193,31 @@ select {
   overflow: visible;
 }
 
-/* legend styling */
 .container {
   display: flex;
   gap: 2em;
   align-items: center;
 }
 
-
-
-
-/* Pie chart interactivity */
+/* Pie slice base styling */
 path {
   cursor: pointer;
   transition: 300ms;
 }
 
+/* Hover effect: fade others */
 svg:has(path:hover) path:not(:hover) {
   opacity: 0.5;
 }
 
+/* Selected pie wedge highlight */
 path.selected {
   stroke: white;
   stroke-width: 3px;
   opacity: 1;
 }
 
-/* Legend interactivity */
-.legend li.selected {
-  --color: oklch(60% 45% 0) !important;
-}
-
-.swatch {
-  display: inline-block;
-  width: 1em;
-  height: 1em;
-  background-color: var(--color);
-  border-radius: 50%;
-}
-
+/* Legend structure */
 .legend {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(9em, 1fr));
@@ -246,4 +232,18 @@ path.selected {
   align-items: center;
   gap: 0.5em;
   cursor: pointer;
+}
+
+/* Swatch square in legend */
+.swatch {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  background-color: var(--color);
+  border-radius: 50%;
+}
+
+/* Selected legend item */
+.legend li.selected {
+  --color: oklch(60% 45% 0) !important;
 }
