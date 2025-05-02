@@ -195,6 +195,7 @@ select {
 
 /* legend styling */
 .legend {
+  flex: 1;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(9em, 1fr));
   gap: 1em;
@@ -214,6 +215,12 @@ select {
   height: 1em;
   background-color: var(--color);
   border-radius: 50%;
+}
+
+.container {
+  display: flex;
+  gap: 2em;
+  align-items: center;
 }
 
 
