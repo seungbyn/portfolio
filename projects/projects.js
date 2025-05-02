@@ -18,6 +18,7 @@ async function loadProjects() {
 loadProjects();
 
 //Pie Chart
+const projects = await fetchJSON('../lib/projects.json');
 let rolledData = d3.rollups(
     projects,
     v => v.length,
