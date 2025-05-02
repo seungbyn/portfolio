@@ -19,11 +19,18 @@ loadProjects();
 
 //Pie Chart
 
-let data = [1, 2, 3, 4, 5, 5];
+let data = [
+    { value: 1, label: 'apples' },
+    { value: 2, label: 'oranges' },
+    { value: 3, label: 'mangos' },
+    { value: 4, label: 'pears' },
+    { value: 5, label: 'limes' },
+    { value: 5, label: 'cherries' },
+];
 let arcGenerator = d3.arc().innerRadius(0).outerRadius(50);
 
 // Create the pie slice angle generator
-let sliceGenerator = d3.pie(); 
+let sliceGenerator = d3.pie().value((d) => d.value);
 let arcData = sliceGenerator(data); // [{startAngle, endAngle, value}, ...]
 let arcs = arcData.map((d) => arcGenerator(d));
 
@@ -32,3 +39,4 @@ let colors = d3.scaleOrdinal(d3.schemeTableau10);
 // Append each arc to the SVG
 let svg = d3.select('#projects-pie-plot'); 
 arcs.forEach((arc, idx) => {svg.append('path').attr('d', arc).attr('fill', colors(idx));});
+
