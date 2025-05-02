@@ -1,4 +1,5 @@
 import { fetchJSON, renderProjects } from '../global.js';
+import * as d3 from 'https://cdn.jsdelivr.net/npm/d3@7.9.0/+esm';
 
 async function loadProjects() {
   const projects = await fetchJSON('../lib/projects.json');
@@ -15,3 +16,5 @@ async function loadProjects() {
 }
 
 loadProjects();
+
+
