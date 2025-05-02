@@ -17,4 +17,10 @@ async function loadProjects() {
 
 loadProjects();
 
+let arcGenerator = d3.arc().innerRadius(0).outerRadius(50);
+let arc = arcGenerator({
+    startAngle: 0,
+    endAngle: 2 * Math.PI,
+});
+
 
