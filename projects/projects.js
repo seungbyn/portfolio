@@ -48,3 +48,8 @@ data.forEach((d, idx) => {
     .html(`<span class="swatch"></span> ${d.label} <em>(${d.value})</em>`); // set the inner html of <li>
 });
 
+
+//searching 
+let query = '';
+
+
