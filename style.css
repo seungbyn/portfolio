@@ -223,5 +223,20 @@ select {
   border-radius: 50%;
 }
 
+/* hovering over pie */
+.selected {
+  --color: oklch(60% 45% 0) !important;
+}
+path.selected {
+  fill: var(--color);
+}
+path {
+  cursor: pointer;
+  transition: 300ms;
+}
+svg:has(path:hover) path:not(:hover) {
+  opacity: 0.5;
+}
+
 
 
