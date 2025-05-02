@@ -22,5 +22,6 @@ let arc = arcGenerator({
     startAngle: 0,
     endAngle: 2 * Math.PI,
 });
+d3.select('svg').append('path').attr('d', arc).attr('fill', 'red');
 
 
