@@ -10,21 +10,20 @@ async function loadProjects() {
 
   // State
   let query = '';
-  let selectedYears = new Set(); // ⬅ allows multiple selection
+  let selectedYears = new Set(); // multiple selection
   let currentPieData = [];
 
   // Initial render
   renderAll(projects);
 
-  // Search interactivity
   searchInput.addEventListener('input', (event) => {
     query = event.target.value;
-    const filtered = filterProjects(projects, query, selectedYears);
+    const filtered = filterProjects(projects);
     renderProjects(filtered, projectsContainer, 'h2');
     renderPieChart(filtered);
   });
 
-  function filterProjects(data, query, selectedYearsSet) {
+  function filterProjects(data) {
     return data.filter((project) => {
       const matchesQuery = Object.values(project)
         .join('\n')
@@ -32,7 +31,7 @@ async function loadProjects() {
         .includes(query.toLowerCase());
 
       const matchesYear =
-        selectedYearsSet.size === 0 || selectedYearsSet.has(project.year);
+        selectedYears.size === 0 || selectedYears.has(project.year);
 
       return matchesQuery && matchesYear;
     });
@@ -44,7 +43,6 @@ async function loadProjects() {
   }
 
   function renderPieChart(projectsGiven) {
-    // Group by year
     const rolled = d3.rollups(
       projectsGiven,
       (v) => v.length,
@@ -63,51 +61,51 @@ async function loadProjects() {
     const arcData = sliceGenerator(data);
     const colors = d3.scaleOrdinal(d3.schemeTableau10);
 
-    // Clear old content
     svg.selectAll('path').remove();
     legend.selectAll('li').remove();
 
-    // Draw wedges
+    // Wedges
     svg
       .selectAll('path')
       .data(arcData)
       .enter()
       .append('path')
       .attr('d', arcGenerator)
-      .attr('fill', (_, idx) => colors(idx))
-      .attr('data-year', (_, idx) => data[idx].label)
-      .classed('selected', (_, idx) => selectedYears.has(data[idx].label))
-      .on('click', function (_, idx) {
-        const year = data[idx].label;
-        // Toggle year in Set
+      .attr('fill', (_, i) => colors(i))
+      .attr('data-year', (_, i) => data[i].label)
+      .classed('selected', (_, i) => selectedYears.has(data[i].label))
+      .on('click', (_, i) => {
+        const year = data[i].label;
         if (selectedYears.has(year)) {
           selectedYears.delete(year);
         } else {
           selectedYears.add(year);
         }
-        const filtered = filterProjects(projects, query, selectedYears);
+
+        const filtered = filterProjects(projects);
         renderProjects(filtered, projectsContainer, 'h2');
         renderPieChart(filtered);
       });
 
-    // Draw legend
+    // Legend
     legend
       .selectAll('li')
       .data(data)
       .enter()
       .append('li')
-      .attr('style', (_, idx) => `--color:${colors(idx)}`)
+      .attr('style', (_, i) => `--color:${colors(i)}`)
       .attr('data-year', (d) => d.label)
       .classed('selected', (d) => selectedYears.has(d.label))
-      .html((d, idx) => `<span class="swatch"></span> ${d.label} <em>(${d.value})</em>`)
-      .on('click', function (_, idx) {
-        const year = data[idx].label;
+      .html((d) => `<span class="swatch"></span> ${d.label} <em>(${d.value})</em>`)
+      .on('click', (_, i) => {
+        const year = data[i].label;
         if (selectedYears.has(year)) {
           selectedYears.delete(year);
         } else {
           selectedYears.add(year);
         }
-        const filtered = filterProjects(projects, query, selectedYears);
+
+        const filtered = filterProjects(projects);
         renderProjects(filtered, projectsContainer, 'h2');
         renderPieChart(filtered);
       });
