@@ -19,7 +19,7 @@ loadProjects();
 
 //Pie Chart
 const projects = await fetchJSON('../lib/projects.json');
-let rolledData = d3.rollups(
+/*let rolledData = d3.rollups(
     projects,
     v => v.length,
     d => d.year
@@ -48,9 +48,53 @@ data.forEach((d, idx) => {
     .attr('style', `--color:${colors(idx)}`) // set the style attribute while passing in parameters
     .html(`<span class="swatch"></span> ${d.label} <em>(${d.value})</em>`); // set the inner html of <li>
 });
-
+*/
+function renderPieChart(projectsGiven) {
+    // Clear old paths and legend
+    d3.select('svg').selectAll('path').remove();
+    d3.select('.legend').selectAll('li').remove();
+  
+    let rolled = d3.rollups(projectsGiven, v => v.length, d => d.year);
+    let data = rolled.map(([year, count]) => ({ value: count, label: year }));
+  
+    let sliceGen = d3.pie().value(d => d.value);
+    let arcGen = d3.arc().innerRadius(0).outerRadius(50);
+    let colors = d3.scaleOrdinal(d3.schemeTableau10);
+  
+    let arcs = sliceGen(data).map(d => arcGen(d));
+  
+    arcs.forEach((arc, idx) => {
+      d3.select('svg')
+        .append('path')
+        .attr('d', arc)
+        .attr('fill', colors(idx));
+    });
+  
+    let legend = d3.select('.legend');
+    data.forEach((d, idx) => {
+      legend.append('li')
+        .attr('style', `--color:${colors(idx)}`)
+        .html(`<span class="swatch"></span> ${d.label} <em>(${d.value})</em>`);
+    });
+}
+  
+renderPieChart(projects); // on load
+  
 
 //searching 
 let query = '';
+let searchInput = document.querySelector('.searchBar');
+
+searchInput.addEventListener('input', (event) => {
+  query = event.target.value;
+  let filteredProjects = projects.filter((project) => {
+    let values = Object.values(project).join('\n').toLowerCase();
+    return values.includes(query.toLowerCase());
+  });
+
+  renderProjects(filteredProjects, projectsContainer, 'h2');
+  renderPieChart(filteredProjects);
+});
+
 
 
