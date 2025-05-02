@@ -74,8 +74,8 @@ async function loadProjects() {
       .attr('fill', (_, i) => colors(i))
       .attr('data-year', (_, i) => data[i].label)
       .classed('selected', (_, i) => selectedYears.has(data[i].label))
-      .on('click', (_, i) => {
-        const year = data[i].label;
+      .on('click', (event, d, i) => {
+        const year = d.data.label;
         if (selectedYears.has(year)) {
           selectedYears.delete(year);
         } else {
