@@ -79,19 +79,23 @@ function renderCommitInfo(data, commits) {
 function renderScatterPlot(data, commits) {
     const width = 1000;
     const height = 600;
+    const margin = { top: 10, right: 10, bottom: 30, left: 20 };
+    const usableArea = {
+        top: margin.top,
+        right: width - margin.right,
+        bottom: height - margin.bottom,
+        left: margin.left,
+        width: width - margin.left - margin.right,
+        height: height - margin.top - margin.bottom,
+    };
     const svg = d3
         .select('#chart')
         .append('svg')
         .attr('viewBox', `0 0 ${width} ${height}`)
         .style('overflow', 'visible');
 
-    const xScale = d3
-        .scaleTime()
-        .domain(d3.extent(commits, (d) => d.datetime))
-        .range([0, width])
-        .nice();
-
-    const yScale = d3.scaleLinear().domain([0, 24]).range([height, 0]);
+    xScale.range([usableArea.left, usableArea.right]);
+    yScale.range([usableArea.bottom, usableArea.top]);
 
     const dots = svg.append('g').attr('class', 'dots');
 
@@ -111,7 +115,6 @@ function renderScatterPlot(data, commits) {
 let data = await loadData();
 let commits = processCommits(data);
 console.log(commits);
-console.print(commits);
   
 renderCommitInfo(data, commits);
 renderScatterPlot(data, commits);
