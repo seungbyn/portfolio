@@ -248,6 +248,7 @@ path.selected {
   --color: oklch(60% 45% 0) !important;
 }
 
+/* lab 6 */
 .gridlines line {
   stroke: #ccc;
   stroke-opacity: 0.5;
@@ -273,4 +274,39 @@ path.selected {
 .dots circle:hover {
   fill: #ff7043;
   r: 7;
+}
+
+/* tip things */
+.info {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.5em;
+  padding: 0.5em;
+  background-color: rgba(255, 255, 255, 0.9);
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 6px;
+  pointer-events: none;
+  transition: opacity 300ms, visibility 300ms;
+}
+
+.tooltip {
+  position: fixed;
+  top: 1em;
+  left: 1em;
+  z-index: 10;
+}
+
+.tooltip[hidden] {
+  opacity: 0;
+  visibility: hidden;
+}
+
+circle {
+  transition: transform 200ms;
+  transform-origin: center;
+}
+
+circle:hover {
+  transform: scale(1.5);
+  fill: #ff7043;
 }

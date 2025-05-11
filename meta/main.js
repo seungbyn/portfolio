@@ -3,7 +3,7 @@ import * as d3 from 'https://cdn.jsdelivr.net/npm/d3@7.9.0/+esm';
 async function loadData() {
     const data = await d3.csv('loc.csv', (row) => ({
         ...row,
-        line: Number(row.line), // or just +row.line
+        line: Number(row.line),
         depth: Number(row.depth),
         length: Number(row.length),
         date: new Date(row.date + 'T00:00' + row.timezone),
@@ -34,7 +34,7 @@ function processCommits(data) {
   
             Object.defineProperty(ret, 'lines', {
                 value: lines,
-                enumerable: false, // Do not include in console output
+                enumerable: false,
                 writable: true,
                 configurable: true,
             });
@@ -43,37 +43,45 @@ function processCommits(data) {
         });
 }
 
-function renderCommitInfo(data, commits) {
-    // Clear previous content
-    d3.select('#stats').selectAll('*').remove();
-  
-    // Create the dl element
-    const dl = d3.select('#stats').append('dl').attr('class', 'stats');
-  
-    // Total LOC
-    dl.append('dt').html('Total <abbr title="Lines of code">Lines of Code</abbr>');
-    dl.append('dd').text(data.length);
-  
-    // Total commits
-    dl.append('dt').text('Total commits');
-    dl.append('dd').text(commits.length);
-  
-    // Total files
-    const fileCount = d3.group(data, d => d.file).size;
-    dl.append('dt').text('Total files');
-    dl.append('dd').text(fileCount);
-  
-    // Day of the week with most work
-    const workByDay = d3.rollups(
-        data,
-        v => v.length,
-        d => new Date(d.datetime).toLocaleString('en-US', { weekday: 'long' })
-    );
-  
-    const maxDay = d3.greatest(workByDay, d => d[1])?.[0];
-    dl.append('dt').text('Day of the week with most work');
-    dl.append('dd').text(maxDay);
-  
+function renderTooltipContent(commit) {
+    const link = document.getElementById('commit-link');
+    const date = document.getElementById('commit-date');
+    const time = document.getElementById('commit-time');
+    const author = document.getElementById('commit-author');
+    const lines = document.getElementById('commit-lines');
+
+    if (!commit) return;
+
+    link.href = commit.url;
+    link.textContent = commit.id;
+    date.textContent = commit.datetime?.toLocaleDateString('en', { dateStyle: 'full' });
+    time.textContent = commit.datetime?.toLocaleTimeString('en', { hour: '2-digit', minute: '2-digit' });
+    author.textContent = commit.author;
+    lines.textContent = commit.totalLines;
+}
+
+function updateTooltipVisibility(isVisible) {
+    const tooltip = document.getElementById('commit-tooltip');
+    tooltip.hidden = !isVisible;
+}
+
+function updateTooltipPosition(event) {
+    const tooltip = document.getElementById('commit-tooltip');
+    const tooltipWidth = tooltip.offsetWidth;
+    const tooltipHeight = tooltip.offsetHeight;
+
+    let left = event.clientX + 15;
+    let top = event.clientY + 15;
+
+    if (left + tooltipWidth > window.innerWidth) {
+        left = event.clientX - tooltipWidth - 15;
+    }
+    if (top + tooltipHeight > window.innerHeight) {
+        top = event.clientY - tooltipHeight - 15;
+    }
+
+    tooltip.style.left = `${left}px`;
+    tooltip.style.top = `${top}px`;
 }
 
 function renderScatterPlot(data, commits) {
@@ -96,7 +104,6 @@ function renderScatterPlot(data, commits) {
         .attr('viewBox', `0 0 ${width} ${height}`)
         .style('overflow', 'visible');
 
-    // Scales
     const xScale = d3
         .scaleTime()
         .domain(d3.extent(commits, (d) => d.datetime))
@@ -121,9 +128,7 @@ function renderScatterPlot(data, commits) {
 
     // Axes
     const xAxis = d3.axisBottom(xScale).tickFormat(d3.timeFormat('%b %d'));
-    const yAxis = d3
-        .axisLeft(yScale)
-        .tickFormat((d) => String(d % 24).padStart(2, '0') + ':00');
+    const yAxis = d3.axisLeft(yScale).tickFormat((d) => `${String(d % 24).padStart(2, '0')}:00`);
 
     svg
         .append('g')
@@ -147,20 +152,22 @@ function renderScatterPlot(data, commits) {
         .attr('cx', (d) => xScale(d.datetime))
         .attr('cy', (d) => yScale(d.hourFrac))
         .attr('r', 5)
-        .attr('fill', (d) => {
-            const hour = d.hourFrac;
-            return hour >= 6 && hour <= 18 ? '#ffa726' : '#42a5f5';
+        .attr('fill', (d) => (d.hourFrac >= 6 && d.hourFrac <= 18 ? '#ffa726' : '#42a5f5'))
+        .attr('opacity', 0.8)
+        .on('mouseenter', (event, commit) => {
+            renderTooltipContent(commit);
+            updateTooltipVisibility(true);
+            updateTooltipPosition(event);
         })
-        .attr('opacity', 0.8);
+        .on('mousemove', updateTooltipPosition)
+        .on('mouseleave', () => {
+            updateTooltipVisibility(false);
+        });
 }
 
-  
-  
-  
-  
+
 let data = await loadData();
 let commits = processCommits(data);
-console.log(commits);
-  
-renderCommitInfo(data, commits);
 renderScatterPlot(data, commits);
+
+
