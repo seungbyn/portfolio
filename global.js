@@ -15,7 +15,7 @@ let pages = [
     { url: 'https://seungbyn.github.io/portfolio/projects/index.html', title: 'Projects' },
     { url: 'https://seungbyn.github.io/portfolio/contact/index.html', title: 'Contact'},
     { url: 'https://seungbyn.github.io/portfolio/CV/index.html', title: 'Resume'},
-    { url: 'https://seungbyn.github.io/portfolio/Meta/index.html', title: 'Meta'},
+    { url: 'https://seungbyn.github.io/portfolio/meta/index.html', title: 'Meta'},
     { url: 'https://github.com/seungbyn', title: 'Github'}
   ];
 
