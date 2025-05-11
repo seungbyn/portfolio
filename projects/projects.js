@@ -11,23 +11,23 @@ async function loadProjects() {
   let query = '';
   let selectedYears = new Set();
 
-  // Initial filtered state
+  // initial projects
   let filteredProjects = allProjects;
 
-  // Main rendering pipeline
+  // main rendering func
   function renderEverything() {
     filteredProjects = filterByQuery(allProjects, query);
     renderProjects(filterByYear(filteredProjects), projectsContainer, 'h2');
     renderPieChart(filteredProjects);
   }
 
-  // Handle search input
+  // searching
   searchInput.addEventListener('input', (event) => {
     query = event.target.value;
     renderEverything();
   });
 
-  // Filter by search query
+  // filtering with query
   function filterByQuery(data, q) {
     const qLower = q.toLowerCase();
     return data.filter((project) => {
@@ -38,14 +38,16 @@ async function loadProjects() {
     });
   }
 
-  // Filter by selected years
+  // filtering by years
   function filterByYear(data) {
     if (selectedYears.size === 0) return data;
     return data.filter((p) => selectedYears.has(p.year));
   }
 
+
+  // make piechart based on filtered query data
   function renderPieChart(data) {
-    // Rollup project counts per year
+    // project counts per year
     const rolled = d3.rollups(
       data,
       (v) => v.length,
@@ -65,7 +67,7 @@ async function loadProjects() {
     svg.selectAll('path').remove();
     legend.selectAll('li').remove();
 
-    // Draw wedges
+    // drawing pie chart
     svg
       .selectAll('path')
       .data(arcData)
@@ -86,7 +88,7 @@ async function loadProjects() {
         renderPieChart(filteredProjects);
       });
 
-    // Draw legend
+    // drawing legend
     legend
       .selectAll('li')
       .data(pieData)
