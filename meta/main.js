@@ -94,6 +94,13 @@ function renderScatterPlot(data, commits) {
         .attr('viewBox', `0 0 ${width} ${height}`)
         .style('overflow', 'visible');
 
+    const xScale = d3
+        .scaleTime()
+        .domain(d3.extent(commits, (d) => d.datetime))
+        .range([0, width])
+        .nice();
+      
+      const yScale = d3.scaleLinear().domain([0, 24]).range([height, 0]);
     xScale.range([usableArea.left, usableArea.right]);
     yScale.range([usableArea.bottom, usableArea.top]);
 
