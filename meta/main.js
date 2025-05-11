@@ -79,7 +79,8 @@ function renderCommitInfo(data, commits) {
 function renderScatterPlot(data, commits) {
     const width = 1000;
     const height = 600;
-    const margin = { top: 10, right: 10, bottom: 30, left: 20 };
+    const margin = { top: 10, right: 10, bottom: 50, left: 60 };
+
     const usableArea = {
         top: margin.top,
         right: width - margin.right,
@@ -88,23 +89,55 @@ function renderScatterPlot(data, commits) {
         width: width - margin.left - margin.right,
         height: height - margin.top - margin.bottom,
     };
+
     const svg = d3
         .select('#chart')
         .append('svg')
         .attr('viewBox', `0 0 ${width} ${height}`)
         .style('overflow', 'visible');
 
+    // Scales
     const xScale = d3
         .scaleTime()
         .domain(d3.extent(commits, (d) => d.datetime))
-        .range([0, width])
+        .range([usableArea.left, usableArea.right])
         .nice();
-      
-    const yScale = d3.scaleLinear().domain([0, 24]).range([height, 0]);
-    
-    xScale.range([usableArea.left, usableArea.right]);
-    yScale.range([usableArea.bottom, usableArea.top]);
 
+    const yScale = d3
+        .scaleLinear()
+        .domain([0, 24])
+        .range([usableArea.bottom, usableArea.top])
+        .nice();
+
+    // Gridlines
+    const gridlines = svg
+        .append('g')
+        .attr('class', 'gridlines')
+        .attr('transform', `translate(${usableArea.left}, 0)`);
+
+    gridlines.call(
+        d3.axisLeft(yScale).tickSize(-usableArea.width).tickFormat('').ticks(24)
+    );
+
+    // Axes
+    const xAxis = d3.axisBottom(xScale).tickFormat(d3.timeFormat('%b %d'));
+    const yAxis = d3
+        .axisLeft(yScale)
+        .tickFormat((d) => String(d % 24).padStart(2, '0') + ':00');
+
+    svg
+        .append('g')
+        .attr('transform', `translate(0, ${usableArea.bottom})`)
+        .attr('class', 'x-axis')
+        .call(xAxis);
+
+    svg
+        .append('g')
+        .attr('transform', `translate(${usableArea.left}, 0)`)
+        .attr('class', 'y-axis')
+        .call(yAxis);
+
+    // Scatterplot Dots
     const dots = svg.append('g').attr('class', 'dots');
 
     dots
@@ -114,8 +147,13 @@ function renderScatterPlot(data, commits) {
         .attr('cx', (d) => xScale(d.datetime))
         .attr('cy', (d) => yScale(d.hourFrac))
         .attr('r', 5)
-        .attr('fill', 'steelblue');
+        .attr('fill', (d) => {
+            const hour = d.hourFrac;
+            return hour >= 6 && hour <= 18 ? '#ffa726' : '#42a5f5';
+        })
+        .attr('opacity', 0.8);
 }
+
   
   
   
