@@ -1,11 +1,17 @@
 import * as d3 from 'https://cdn.jsdelivr.net/npm/d3@7.9.0/+esm';
 
+//For visualization with grids
 let xScale, yScale;
 
+/*
+loads data from CSV file + processes
+converts data into numbers/date objects
+returns processed data as array of objects
+*/
 async function loadData() {
     const data = await d3.csv('loc.csv', (row) => ({
         ...row,
-        line: Number(row.line),
+        line: Number(row.line), 
         depth: Number(row.depth),
         length: Number(row.length),
         date: new Date(row.date + 'T00:00' + row.timezone),
@@ -14,53 +20,61 @@ async function loadData() {
     return data;
 }
 
+/*
+processes all commit data by grouping data by commit ID
+*/
 function processCommits(data) {
     return d3.groups(data, (d) => d.commit).map(([commit, lines]) => {
         const first = lines[0];
         const { author, datetime } = first;
 
         return {
-            id: commit,
+            id: commit, //commit ID
             url: `https://github.com/vis-society/lab-7/commit/${commit}`,
             author,
             datetime,
             hourFrac: datetime.getHours() + datetime.getMinutes() / 60,
-            totalLines: lines.length,
+            totalLines: lines.length, //total lines edited
             lines,
         };
     });
 }
 
+/*
+renders commit info in #stats element in meta index.html
+*/
 function renderCommitInfo(data, commits) {
     const statsContainer = d3.select('#stats').html('');
 
     const dl = statsContainer.append('dl').attr('class', 'stats');
 
-    // Total Lines of Code
+    // total lines of code
     dl.append('dt').text('Total LOC');
     dl.append('dd').text(data.length);
 
-    // Total Commits
+    // total commits
     dl.append('dt').text('Total Commits');
     dl.append('dd').text(commits.length);
 
-    // Total Files
+    // total files
     const fileCount = d3.group(data, d => d.file).size;
     dl.append('dt').text('Total Files');
     dl.append('dd').text(fileCount);
 
-    // Day with Most Work
+    // finding lines per day
     const workByDay = d3.rollups(
         data,
-        v => v.length,
+        v => v.length, // count number of lines per day
         d => new Date(d.datetime).toLocaleString('en-US', { weekday: 'long' })
     );
 
+    // day with most work
     const maxDay = d3.greatest(workByDay, d => d[1])?.[0];
     dl.append('dt').text('Day with Most Work');
     dl.append('dd').text(maxDay);
 }
 
+// updating tooltip content based on selected
 function renderTooltipContent(commit) {
     const link = document.getElementById('commit-link');
     const date = document.getElementById('commit-date');
@@ -76,11 +90,13 @@ function renderTooltipContent(commit) {
     lines.textContent = commit.totalLines;
 }
 
+// function to toggle tooltip visibility based on boolean
 function updateTooltipVisibility(isVisible) {
     const tooltip = document.getElementById('commit-tooltip');
     tooltip.style.opacity = isVisible ? 1 : 0;
 }
 
+// updating tooltip position based on mouse event coordinates
 function updateTooltipPosition(event) {
     const tooltip = document.getElementById('commit-tooltip');
     const padding = 10;
@@ -101,11 +117,13 @@ function updateTooltipPosition(event) {
     tooltip.style.top = `${top}px`;
 }
 
+// update selection count display
 function renderSelectionCount(count) {
     const countElement = document.getElementById('selection-count');
     countElement.textContent = `${count || 'No'} commits selected`;
 }
 
+// update language breakdown of selected commits
 function renderLanguageBreakdown(selectedCommits) {
     const container = document.getElementById('language-breakdown');
     container.innerHTML = '';
@@ -120,11 +138,12 @@ function renderLanguageBreakdown(selectedCommits) {
     const breakdown = d3.rollup(
         lines,
         (v) => v.length,
-        (d) => d.type
+        (d) => d.type // grouping by type of code
     );
 
     const totalLines = lines.length;
 
+    // rendering each language and percentage
     for (const [type, count] of breakdown) {
         const percentage = ((count / totalLines) * 100).toFixed(1);
         container.innerHTML += `
@@ -134,6 +153,7 @@ function renderLanguageBreakdown(selectedCommits) {
     }
 }
 
+// rendering scatter plot of commit data
 function renderScatterPlot(data, commits) {
     const width = 1000;
     const height = 600;
@@ -151,7 +171,7 @@ function renderScatterPlot(data, commits) {
         bottom: height - margin.bottom,
     };
 
-    // Scales
+    // scales: x (datetime), y (hourFrac), r(total lines)
     xScale = d3.scaleTime()
         .domain(d3.extent(commits, (d) => d.datetime))
         .range([usableArea.left, usableArea.right])
@@ -208,7 +228,7 @@ function renderScatterPlot(data, commits) {
         renderLanguageBreakdown(selectedCommits);
     }
 
-    // Dots
+    // adding dots for each commit
     svg.append('g')
         .attr('class', 'dots')
         .selectAll('circle')
@@ -232,6 +252,7 @@ function renderScatterPlot(data, commits) {
         });
 }
 
+//function to run everything
 (async function () {
     const data = await loadData();
     const commits = processCommits(data);
