@@ -57,6 +57,7 @@ function updateTooltipPosition(event) {
     let left = event.clientX + padding;
     let top = event.clientY + padding;
 
+    // Prevent overflow
     if (left + tooltipWidth > window.innerWidth) {
         left = event.clientX - tooltipWidth - padding;
     }
@@ -130,17 +131,23 @@ function renderScatterPlot(data, commits) {
         .attr('fill', (d) => (d.hourFrac >= 6 && d.hourFrac <= 18 ? '#ffa726' : '#42a5f5'))
         .attr('opacity', 0.8)
         .on('mouseenter', function (event, commit) {
+            d3.select(this)
+                .attr('fill', '#ff7043')
+                .attr('r', 7);
+
             renderTooltipContent(commit);
             updateTooltipVisibility(true);
             updateTooltipPosition(event);
-            d3.select(this).attr('fill', '#ff7043').attr('r', 7);
         })
-        .on('mousemove', updateTooltipPosition)
+        .on('mousemove', function (event, commit) {
+            updateTooltipPosition(event);
+        })
         .on('mouseleave', function () {
-            updateTooltipVisibility(false);
             d3.select(this)
                 .attr('fill', (d) => (d.hourFrac >= 6 && d.hourFrac <= 18 ? '#ffa726' : '#42a5f5'))
                 .attr('r', 5);
+
+            updateTooltipVisibility(false);
         });
 }
 
