@@ -247,3 +247,30 @@ path.selected {
 .legend li.selected {
   --color: oklch(60% 45% 0) !important;
 }
+
+.gridlines line {
+  stroke: #ccc;
+  stroke-opacity: 0.5;
+}
+
+.x-axis path,
+.y-axis path,
+.x-axis line,
+.y-axis line {
+  stroke: #333;
+}
+
+.x-axis text,
+.y-axis text {
+  font-size: 12px;
+  fill: #333;
+}
+
+.dots circle {
+  transition: fill 0.3s, r 0.3s;
+}
+
+.dots circle:hover {
+  fill: #ff7043;
+  r: 7;
+}
