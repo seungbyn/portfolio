@@ -106,6 +106,34 @@ function renderSelectionCount(count) {
     countElement.textContent = `${count || 'No'} commits selected`;
 }
 
+function renderLanguageBreakdown(selectedCommits) {
+    const container = document.getElementById('language-breakdown');
+    container.innerHTML = '';
+
+    if (selectedCommits.length === 0) {
+        container.innerHTML = `<p>No commits selected.</p>`;
+        return;
+    }
+
+    const lines = selectedCommits.flatMap((d) => d.lines);
+
+    const breakdown = d3.rollup(
+        lines,
+        (v) => v.length,
+        (d) => d.type
+    );
+
+    const totalLines = lines.length;
+
+    for (const [type, count] of breakdown) {
+        const percentage = ((count / totalLines) * 100).toFixed(1);
+        container.innerHTML += `
+            <dt>${type || 'Unknown'}</dt>
+            <dd>${count} lines (${percentage}%)</dd>
+        `;
+    }
+}
+
 function renderScatterPlot(data, commits) {
     const width = 1000;
     const height = 600;
@@ -134,25 +162,20 @@ function renderScatterPlot(data, commits) {
         .range([usableArea.bottom, usableArea.top])
         .nice();
 
-    const [minLines, maxLines] = d3.extent(commits, (d) => d.totalLines);
-
     const rScale = d3.scaleSqrt()
-        .domain([minLines, maxLines])
+        .domain(d3.extent(commits, (d) => d.totalLines))
         .range([2, 30]);
 
     // Axes
-    const xAxis = d3.axisBottom(xScale).tickFormat(d3.timeFormat('%b %d'));
-    const yAxis = d3.axisLeft(yScale).tickFormat((d) => `${d}:00`);
-
     svg.append('g')
         .attr('class', 'x-axis')
         .attr('transform', `translate(0, ${usableArea.bottom})`)
-        .call(xAxis);
+        .call(d3.axisBottom(xScale).tickFormat(d3.timeFormat('%b %d')));
 
     svg.append('g')
         .attr('class', 'y-axis')
         .attr('transform', `translate(${usableArea.left}, 0)`)
-        .call(yAxis);
+        .call(d3.axisLeft(yScale).tickFormat((d) => `${d}:00`));
 
     // Brush
     const brush = d3.brush()
@@ -166,6 +189,7 @@ function renderScatterPlot(data, commits) {
         if (!selection) {
             d3.selectAll('circle').classed('selected', false);
             renderSelectionCount(0);
+            renderLanguageBreakdown([]);
             return;
         }
 
@@ -181,6 +205,7 @@ function renderScatterPlot(data, commits) {
             .classed('selected', (d) => selectedCommits.includes(d));
 
         renderSelectionCount(selectedCommits.length);
+        renderLanguageBreakdown(selectedCommits);
     }
 
     // Dots
