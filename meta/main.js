@@ -71,6 +71,11 @@ function updateTooltipPosition(event) {
     tooltip.style.top = `${top}px`;
 }
 
+function renderSelectionCount(count) {
+    const countElement = document.getElementById('selection-count');
+    countElement.textContent = `${count || 'No'} commits selected`;
+}
+
 function renderScatterPlot(data, commits) {
     const width = 1000;
     const height = 600;
@@ -119,8 +124,8 @@ function renderScatterPlot(data, commits) {
         .attr('transform', `translate(${usableArea.left}, 0)`)
         .call(yAxis);
 
-    // Sort commits by size
-    const sortedCommits = [...commits].sort((a, b) => b.totalLines - a.totalLines);
+    // Sort by totalLines for better interaction handling
+    const sortedCommits = commits.sort((a, b) => b.totalLines - a.totalLines);
 
     // Dots
     const dots = svg.append('g').attr('class', 'dots');
@@ -147,38 +152,33 @@ function renderScatterPlot(data, commits) {
 
     // Brush
     const brush = d3.brush()
+        .extent([[usableArea.left, usableArea.top], [usableArea.right, usableArea.bottom]])
         .on('start brush end', brushed);
 
     svg.append('g').call(brush);
 
     function brushed(event) {
         const selection = event.selection;
-        const selectedCommits = selection
-            ? sortedCommits.filter((d) => isCommitSelected(selection, d))
-            : [];
+
+        if (!selection) {
+            d3.selectAll('circle').classed('selected', false);
+            renderSelectionCount(0);
+            return;
+        }
+
+        const [[x0, y0], [x1, y1]] = selection;
+
+        const selectedCommits = sortedCommits.filter((commit) => {
+            const cx = xScale(commit.datetime);
+            const cy = yScale(commit.hourFrac);
+            return cx >= x0 && cx <= x1 && cy >= y0 && cy <= y1;
+        });
 
         d3.selectAll('circle')
-            .classed('selected', (d) => isCommitSelected(selection, d));
+            .classed('selected', (d) => selectedCommits.includes(d));
 
         renderSelectionCount(selectedCommits.length);
     }
-
-    function isCommitSelected(selection, commit) {
-        if (!selection) return false;
-
-        const [x0, x1] = selection[0].map(xScale.invert);
-        const [y0, y1] = selection[1].map(yScale.invert);
-
-        const cx = xScale(commit.datetime);
-        const cy = yScale(commit.hourFrac);
-
-        return cx >= x0 && cx <= x1 && cy >= y0 && cy <= y1;
-    }
-}
-
-function renderSelectionCount(count) {
-    const countElement = document.getElementById('selection-count');
-    countElement.textContent = `${count || 'No'} commits selected`;
 }
 
 (async function () {
