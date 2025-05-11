@@ -31,6 +31,36 @@ function processCommits(data) {
     });
 }
 
+function renderCommitInfo(data, commits) {
+    const statsContainer = d3.select('#stats').html('');
+
+    const dl = statsContainer.append('dl').attr('class', 'stats');
+
+    // Total Lines of Code
+    dl.append('dt').text('Total LOC');
+    dl.append('dd').text(data.length);
+
+    // Total Commits
+    dl.append('dt').text('Total Commits');
+    dl.append('dd').text(commits.length);
+
+    // Total Files
+    const fileCount = d3.group(data, d => d.file).size;
+    dl.append('dt').text('Total Files');
+    dl.append('dd').text(fileCount);
+
+    // Day with Most Work
+    const workByDay = d3.rollups(
+        data,
+        v => v.length,
+        d => new Date(d.datetime).toLocaleString('en-US', { weekday: 'long' })
+    );
+
+    const maxDay = d3.greatest(workByDay, d => d[1])?.[0];
+    dl.append('dt').text('Day with Most Work');
+    dl.append('dd').text(maxDay);
+}
+
 function renderTooltipContent(commit) {
     const link = document.getElementById('commit-link');
     const date = document.getElementById('commit-date');
@@ -124,14 +154,40 @@ function renderScatterPlot(data, commits) {
         .attr('transform', `translate(${usableArea.left}, 0)`)
         .call(yAxis);
 
-    // Sort by totalLines for better interaction handling
-    const sortedCommits = commits.sort((a, b) => b.totalLines - a.totalLines);
+    // Brush
+    const brush = d3.brush()
+        .extent([[usableArea.left, usableArea.top], [usableArea.right, usableArea.bottom]])
+        .on('start brush end', brushed);
+
+    svg.append('g').call(brush);
+
+    function brushed(event) {
+        const selection = event.selection;
+        if (!selection) {
+            d3.selectAll('circle').classed('selected', false);
+            renderSelectionCount(0);
+            return;
+        }
+
+        const [[x0, y0], [x1, y1]] = selection;
+
+        const selectedCommits = commits.filter((commit) => {
+            const cx = xScale(commit.datetime);
+            const cy = yScale(commit.hourFrac);
+            return cx >= x0 && cx <= x1 && cy >= y0 && cy <= y1;
+        });
+
+        d3.selectAll('circle')
+            .classed('selected', (d) => selectedCommits.includes(d));
+
+        renderSelectionCount(selectedCommits.length);
+    }
 
     // Dots
-    const dots = svg.append('g').attr('class', 'dots');
-
-    dots.selectAll('circle')
-        .data(sortedCommits)
+    svg.append('g')
+        .attr('class', 'dots')
+        .selectAll('circle')
+        .data(commits)
         .join('circle')
         .attr('cx', (d) => xScale(d.datetime))
         .attr('cy', (d) => yScale(d.hourFrac))
@@ -149,40 +205,11 @@ function renderScatterPlot(data, commits) {
             d3.select(this).style('fill-opacity', 0.7);
             updateTooltipVisibility(false);
         });
-
-    // Brush
-    const brush = d3.brush()
-        .extent([[usableArea.left, usableArea.top], [usableArea.right, usableArea.bottom]])
-        .on('start brush end', brushed);
-
-    svg.append('g').call(brush);
-
-    function brushed(event) {
-        const selection = event.selection;
-
-        if (!selection) {
-            d3.selectAll('circle').classed('selected', false);
-            renderSelectionCount(0);
-            return;
-        }
-
-        const [[x0, y0], [x1, y1]] = selection;
-
-        const selectedCommits = sortedCommits.filter((commit) => {
-            const cx = xScale(commit.datetime);
-            const cy = yScale(commit.hourFrac);
-            return cx >= x0 && cx <= x1 && cy >= y0 && cy <= y1;
-        });
-
-        d3.selectAll('circle')
-            .classed('selected', (d) => selectedCommits.includes(d));
-
-        renderSelectionCount(selectedCommits.length);
-    }
 }
 
 (async function () {
     const data = await loadData();
     const commits = processCommits(data);
+    renderCommitInfo(data, commits);
     renderScatterPlot(data, commits);
 })();
