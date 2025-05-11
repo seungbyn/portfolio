@@ -1,5 +1,7 @@
 import * as d3 from 'https://cdn.jsdelivr.net/npm/d3@7.9.0/+esm';
 
+let xScale, yScale;
+
 async function loadData() {
     const data = await d3.csv('loc.csv', (row) => ({
         ...row,
@@ -24,6 +26,7 @@ function processCommits(data) {
             datetime,
             hourFrac: datetime.getHours() + datetime.getMinutes() / 60,
             totalLines: lines.length,
+            lines,
         };
     });
 }
@@ -57,7 +60,6 @@ function updateTooltipPosition(event) {
     let left = event.clientX + padding;
     let top = event.clientY + padding;
 
-    // Prevent overflow
     if (left + tooltipWidth > window.innerWidth) {
         left = event.clientX - tooltipWidth - padding;
     }
@@ -74,81 +76,109 @@ function renderScatterPlot(data, commits) {
     const height = 600;
     const margin = { top: 20, right: 20, bottom: 50, left: 60 };
 
+    const svg = d3.select('#chart')
+        .append('svg')
+        .attr('width', width)
+        .attr('height', height);
+
     const usableArea = {
         left: margin.left,
         right: width - margin.right,
         top: margin.top,
         bottom: height - margin.bottom,
-        width: width - margin.left - margin.right,
-        height: height - margin.top - margin.bottom,
     };
 
-    const svg = d3
-        .select('#chart')
-        .append('svg')
-        .attr('width', width)
-        .attr('height', height);
-
     // Scales
-    const xScale = d3
-        .scaleTime()
+    xScale = d3.scaleTime()
         .domain(d3.extent(commits, (d) => d.datetime))
         .range([usableArea.left, usableArea.right])
         .nice();
 
-    const yScale = d3
-        .scaleLinear()
+    yScale = d3.scaleLinear()
         .domain([0, 24])
         .range([usableArea.bottom, usableArea.top])
         .nice();
+
+    const [minLines, maxLines] = d3.extent(commits, (d) => d.totalLines);
+
+    const rScale = d3.scaleSqrt()
+        .domain([minLines, maxLines])
+        .range([2, 30]);
 
     // Axes
     const xAxis = d3.axisBottom(xScale).tickFormat(d3.timeFormat('%b %d'));
     const yAxis = d3.axisLeft(yScale).tickFormat((d) => `${d}:00`);
 
-    svg
-        .append('g')
+    svg.append('g')
         .attr('class', 'x-axis')
         .attr('transform', `translate(0, ${usableArea.bottom})`)
         .call(xAxis);
 
-    svg
-        .append('g')
+    svg.append('g')
         .attr('class', 'y-axis')
         .attr('transform', `translate(${usableArea.left}, 0)`)
         .call(yAxis);
 
-    // Scatterplot Dots
+    // Sort commits by size
+    const sortedCommits = [...commits].sort((a, b) => b.totalLines - a.totalLines);
+
+    // Dots
     const dots = svg.append('g').attr('class', 'dots');
 
-    dots
-        .selectAll('circle')
-        .data(commits)
+    dots.selectAll('circle')
+        .data(sortedCommits)
         .join('circle')
         .attr('cx', (d) => xScale(d.datetime))
         .attr('cy', (d) => yScale(d.hourFrac))
-        .attr('r', 5)
-        .attr('fill', (d) => (d.hourFrac >= 6 && d.hourFrac <= 18 ? '#ffa726' : '#42a5f5'))
-        .attr('opacity', 0.8)
+        .attr('r', (d) => rScale(d.totalLines))
+        .style('fill', '#42a5f5')
+        .style('fill-opacity', 0.7)
         .on('mouseenter', function (event, commit) {
-            d3.select(this)
-                .attr('fill', '#ff7043')
-                .attr('r', 7);
-
+            d3.select(this).style('fill-opacity', 1);
             renderTooltipContent(commit);
             updateTooltipVisibility(true);
             updateTooltipPosition(event);
         })
-        .on('mousemove', function (event, commit) {
-            updateTooltipPosition(event);
-        })
+        .on('mousemove', updateTooltipPosition)
         .on('mouseleave', function () {
-            d3.select(this)
-                .attr('fill', (d) => (d.hourFrac >= 6 && d.hourFrac <= 18 ? '#ffa726' : '#42a5f5'))
-                .attr('r', 5);
-
+            d3.select(this).style('fill-opacity', 0.7);
             updateTooltipVisibility(false);
         });
+
+    // Brush
+    const brush = d3.brush()
+        .on('start brush end', brushed);
+
+    svg.append('g').call(brush);
+
+    function brushed(event) {
+        const selection = event.selection;
+        const selectedCommits = selection
+            ? sortedCommits.filter((d) => isCommitSelected(selection, d))
+            : [];
+
+        d3.selectAll('circle')
+            .classed('selected', (d) => isCommitSelected(selection, d));
+
+        renderSelectionCount(selectedCommits.length);
+    }
+
+    function isCommitSelected(selection, commit) {
+        if (!selection) return false;
+
+        const [x0, x1] = selection[0].map(xScale.invert);
+        const [y0, y1] = selection[1].map(yScale.invert);
+
+        const cx = xScale(commit.datetime);
+        const cy = yScale(commit.hourFrac);
+
+        return cx >= x0 && cx <= x1 && cy >= y0 && cy <= y1;
+    }
+}
+
+function renderSelectionCount(count) {
+    const countElement = document.getElementById('selection-count');
+    countElement.textContent = `${count || 'No'} commits selected`;
 }
 
 (async function () {

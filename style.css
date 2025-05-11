@@ -282,21 +282,22 @@ path.selected {
   grid-template-columns: auto 1fr;
   gap: 0.5em;
   padding: 0.5em;
-  background-color: rgba(255, 255, 255, 0.9);
+  background-color: rgba(255, 255, 255, 0.95);
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
   border-radius: 6px;
   pointer-events: none;
-  transition: opacity 200ms ease;
   opacity: 0;
   position: fixed;
   z-index: 10;
 }
 
-circle {
-  transition: transform 200ms, fill 200ms;
-  transform-origin: center;
+.selection {
+  fill-opacity: 0.1;
+  stroke: black;
+  stroke-dasharray: 5 3;
 }
 
-circle:hover {
-  transform: scale(1.2);
+circle.selected {
+  fill: #ff6b6b;
 }
+
