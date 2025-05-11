@@ -42,7 +42,48 @@ function processCommits(data) {
             return ret;
         });
 }
+
+function renderCommitInfo(data, commits) {
+    // Clear previous content
+    d3.select('#stats').selectAll('*').remove();
+  
+    // Create the dl element
+    const dl = d3.select('#stats').append('dl').attr('class', 'stats');
+  
+    // Total LOC
+    dl.append('dt').html('Total <abbr title="Lines of code">LOC</abbr>');
+    dl.append('dd').text(data.length);
+  
+    // Total commits
+    dl.append('dt').text('Total commits');
+    dl.append('dd').text(commits.length);
+  
+    // Total files
+    const fileCount = d3.group(data, d => d.file).size;
+    dl.append('dt').text('Total files');
+    dl.append('dd').text(fileCount);
+  
+    // Longest line
+    const longestLine = d3.max(data, d => d.line.length);
+    dl.append('dt').text('Longest line length (characters)');
+    dl.append('dd').text(longestLine);
+  
+    // Day of the week with most work
+    const workByDay = d3.rollups(
+        data,
+        v => v.length,
+        d => new Date(d.datetime).toLocaleString('en-US', { weekday: 'long' })
+    );
+  
+    const maxDay = d3.greatest(workByDay, d => d[1])?.[0];
+    dl.append('dt').text('Day of the week with most work');
+    dl.append('dd').text(maxDay);
+  
+  }
+  
   
 let data = await loadData();
 let commits = processCommits(data);
 console.log(commits);
+  
+renderCommitInfo(data, commits);
