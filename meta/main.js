@@ -13,33 +13,19 @@ async function loadData() {
 }
 
 function processCommits(data) {
-    return d3
-        .groups(data, (d) => d.commit)
-        .map(([commit, lines]) => {
-            let first = lines[0];
-            let { author, date, time, timezone, datetime } = first;
+    return d3.groups(data, (d) => d.commit).map(([commit, lines]) => {
+        const first = lines[0];
+        const { author, datetime } = first;
 
-            let ret = {
-                id: commit,
-                url: 'https://github.com/vis-society/lab-7/commit/' + commit,
-                author,
-                date,
-                time,
-                timezone,
-                datetime,
-                hourFrac: datetime.getHours() + datetime.getMinutes() / 60,
-                totalLines: lines.length,
-            };
-
-            Object.defineProperty(ret, 'lines', {
-                value: lines,
-                enumerable: false,
-                writable: true,
-                configurable: true,
-            });
-
-            return ret;
-        });
+        return {
+            id: commit,
+            url: `https://github.com/vis-society/lab-7/commit/${commit}`,
+            author,
+            datetime,
+            hourFrac: datetime.getHours() + datetime.getMinutes() / 60,
+            totalLines: lines.length,
+        };
+    });
 }
 
 function renderTooltipContent(commit) {
@@ -51,8 +37,8 @@ function renderTooltipContent(commit) {
 
     link.href = commit.url;
     link.textContent = commit.id;
-    date.textContent = commit.datetime?.toLocaleDateString('en', { dateStyle: 'full' });
-    time.textContent = commit.datetime?.toLocaleTimeString('en', { hour: '2-digit', minute: '2-digit' });
+    date.textContent = commit.datetime?.toLocaleDateString('en-US');
+    time.textContent = commit.datetime?.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
     author.textContent = commit.author;
     lines.textContent = commit.totalLines;
 }
@@ -71,7 +57,6 @@ function updateTooltipPosition(event) {
     let left = event.clientX + padding;
     let top = event.clientY + padding;
 
-    // Prevent overflow
     if (left + tooltipWidth > window.innerWidth) {
         left = event.clientX - tooltipWidth - padding;
     }
@@ -86,13 +71,13 @@ function updateTooltipPosition(event) {
 function renderScatterPlot(data, commits) {
     const width = 1000;
     const height = 600;
-    const margin = { top: 10, right: 10, bottom: 50, left: 60 };
+    const margin = { top: 20, right: 20, bottom: 50, left: 60 };
 
     const usableArea = {
-        top: margin.top,
-        right: width - margin.right,
-        bottom: height - margin.bottom,
         left: margin.left,
+        right: width - margin.right,
+        top: margin.top,
+        bottom: height - margin.bottom,
         width: width - margin.left - margin.right,
         height: height - margin.top - margin.bottom,
     };
@@ -100,9 +85,10 @@ function renderScatterPlot(data, commits) {
     const svg = d3
         .select('#chart')
         .append('svg')
-        .attr('viewBox', `0 0 ${width} ${height}`)
-        .style('overflow', 'visible');
+        .attr('width', width)
+        .attr('height', height);
 
+    // Scales
     const xScale = d3
         .scaleTime()
         .domain(d3.extent(commits, (d) => d.datetime))
@@ -115,6 +101,23 @@ function renderScatterPlot(data, commits) {
         .range([usableArea.bottom, usableArea.top])
         .nice();
 
+    // Axes
+    const xAxis = d3.axisBottom(xScale).tickFormat(d3.timeFormat('%b %d'));
+    const yAxis = d3.axisLeft(yScale).tickFormat((d) => `${d}:00`);
+
+    svg
+        .append('g')
+        .attr('class', 'x-axis')
+        .attr('transform', `translate(0, ${usableArea.bottom})`)
+        .call(xAxis);
+
+    svg
+        .append('g')
+        .attr('class', 'y-axis')
+        .attr('transform', `translate(${usableArea.left}, 0)`)
+        .call(yAxis);
+
+    // Scatterplot Dots
     const dots = svg.append('g').attr('class', 'dots');
 
     dots
@@ -127,22 +130,22 @@ function renderScatterPlot(data, commits) {
         .attr('fill', (d) => (d.hourFrac >= 6 && d.hourFrac <= 18 ? '#ffa726' : '#42a5f5'))
         .attr('opacity', 0.8)
         .on('mouseenter', function (event, commit) {
-            d3.select(this).attr('r', 7).attr('fill', '#ff7043');
             renderTooltipContent(commit);
             updateTooltipVisibility(true);
             updateTooltipPosition(event);
+            d3.select(this).attr('fill', '#ff7043').attr('r', 7);
         })
-        .on('mousemove', function (event) {
-            updateTooltipPosition(event);
-        })
+        .on('mousemove', updateTooltipPosition)
         .on('mouseleave', function () {
-            d3.select(this).attr('r', 5).attr('fill', (d) => (d.hourFrac >= 6 && d.hourFrac <= 18 ? '#ffa726' : '#42a5f5'));
             updateTooltipVisibility(false);
+            d3.select(this)
+                .attr('fill', (d) => (d.hourFrac >= 6 && d.hourFrac <= 18 ? '#ffa726' : '#42a5f5'))
+                .attr('r', 5);
         });
 }
 
-
-const data = await loadData();
-const commits = processCommits(data);
-renderScatterPlot(data, commits);
-
+(async function () {
+    const data = await loadData();
+    const commits = processCommits(data);
+    renderScatterPlot(data, commits);
+})();
