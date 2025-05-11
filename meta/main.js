@@ -51,7 +51,7 @@ function renderCommitInfo(data, commits) {
     const dl = d3.select('#stats').append('dl').attr('class', 'stats');
   
     // Total LOC
-    dl.append('dt').html('Total <abbr title="Lines of code">LOC</abbr>');
+    dl.append('dt').html('Total <abbr title="Lines of code">Lines of Code</abbr>');
     dl.append('dd').text(data.length);
   
     // Total commits
@@ -62,11 +62,6 @@ function renderCommitInfo(data, commits) {
     const fileCount = d3.group(data, d => d.file).size;
     dl.append('dt').text('Total files');
     dl.append('dd').text(fileCount);
-  
-    // Longest line
-    const longestLine = d3.max(data, d => d.line.length);
-    dl.append('dt').text('Longest line length (characters)');
-    dl.append('dd').text(longestLine);
   
     // Day of the week with most work
     const workByDay = d3.rollups(
@@ -79,11 +74,44 @@ function renderCommitInfo(data, commits) {
     dl.append('dt').text('Day of the week with most work');
     dl.append('dd').text(maxDay);
   
-  }
+}
+
+function renderScatterPlot(data, commits) {
+    const width = 1000;
+    const height = 600;
+    const svg = d3
+        .select('#chart')
+        .append('svg')
+        .attr('viewBox', `0 0 ${width} ${height}`)
+        .style('overflow', 'visible');
+
+    const xScale = d3
+        .scaleTime()
+        .domain(d3.extent(commits, (d) => d.datetime))
+        .range([0, width])
+        .nice();
+
+    const yScale = d3.scaleLinear().domain([0, 24]).range([height, 0]);
+
+    const dots = svg.append('g').attr('class', 'dots');
+
+    dots
+        .selectAll('circle')
+        .data(commits)
+        .join('circle')
+        .attr('cx', (d) => xScale(d.datetime))
+        .attr('cy', (d) => yScale(d.hourFrac))
+        .attr('r', 5)
+        .attr('fill', 'steelblue');
+}
+  
+  
   
   
 let data = await loadData();
 let commits = processCommits(data);
 console.log(commits);
+console.print(commits);
   
 renderCommitInfo(data, commits);
+renderScatterPlot(data, commits);
