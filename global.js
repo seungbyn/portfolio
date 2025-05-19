@@ -11,13 +11,13 @@ const BASE_PATH = (location.hostname === "localhost" || location.hostname === "1
   : "/website/";         // GitHub Pages repo name
 
 let pages = [
-    { url: 'https://seungbyn.github.io/portfolio/index.html', title: 'Home' },
-    { url: 'https://seungbyn.github.io/portfolio/projects/index.html', title: 'Projects' },
-    { url: 'https://seungbyn.github.io/portfolio/contact/index.html', title: 'Contact'},
-    { url: 'https://seungbyn.github.io/portfolio/CV/index.html', title: 'Resume'},
-    { url: 'https://seungbyn.github.io/portfolio/meta/index.html', title: 'Meta'},
-    { url: 'https://github.com/seungbyn', title: 'Github'}
-  ];
+  { url: 'index.html', title: 'Home' },
+  { url: 'projects/index.html', title: 'Projects' },
+  { url: 'contact/index.html', title: 'Contact' },
+  { url: 'CV/index.html', title: 'Resume' },
+  { url: 'meta/index.html', title: 'Meta' },
+  { url: 'https://github.com/seungbyn', title: 'Github' }
+];
 
 let nav = document.createElement('nav');
 document.body.prepend(nav);
